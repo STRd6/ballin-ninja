@@ -1,0 +1,5 @@
+%ul
+  - @gems.each do |ruby_gem|
+    %li
+      - href = "/gems/#{ruby_gem.id}"
+      %a{:href => href}= ruby_gem.name

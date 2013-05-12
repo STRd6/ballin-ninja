@@ -1,0 +1,5 @@
+%ul
+  - @repos.each do |repo|
+    %li
+      - href = "/repos/#{repo.id}"
+      %a{:href => href}= repo.name

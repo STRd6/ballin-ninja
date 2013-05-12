@@ -1,0 +1,7 @@
+%h1= @gem.name
+
+%h2 Used In
+%ul
+  - @gem.repos.each do |repo|
+    %li
+      %a{:href => "/repos/#{repo.id}"}= repo.name

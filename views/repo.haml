@@ -1,0 +1,7 @@
+%h1= @repo.name
+
+%h2 Dependencies
+%ul
+  - @repo.ruby_gems.each do |ruby_gem|
+    %li
+      %a{:href => "/gems/#{ruby_gem.id}"}= ruby_gem.name
