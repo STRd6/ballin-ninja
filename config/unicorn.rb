@@ -1,3 +1,5 @@
+require "sidekiq"
+
 worker_processes 3
 
 before_fork do |server, worker|
