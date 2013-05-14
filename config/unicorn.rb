@@ -1,10 +1,7 @@
 worker_processes 3
 
 before_fork do |server, worker|
-  @sidekiq_pid ||= spawn("bundle exec sidekiq")
-  sleep 1
-
-  HardWorker.perform_async('bob', 5)
+  @sidekiq_pid ||= spawn("bundle exec sidekiq -r ./main.rb")
 end
 
 after_fork do |server, worker|
