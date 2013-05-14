@@ -20,6 +20,12 @@ class GitInfo
 
     begin
       repos = github.get_request "/repositories?since=#{since}"
+    rescue Faraday::Error::ConnectionFailed, Github::Error::ServiceError => e
+      puts e.message
+
+      sleep 60
+
+      retry
     rescue Github::Error::Forbidden => e # This happens when we hit our rate-limit
       puts e.message
 

@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require "./git_info"
 require './parser_util'
 require "active_record"
@@ -10,11 +12,12 @@ class Repo < ActiveRecord::Base
   serialize :data, ActiveRecord::Coders::Hstore
 
   scope :with_gemfiles, where("(data->'Gemfile') IS NOT NULL")
+  scope :with_trees, where("(data->'tree') IS NOT NULL")
 
   def self.process_gemfiles
     # This finds repos that have data (data IS NOT NULL)
     # but don't have a Gemfile key in that data
-    Repo.where("NOT data ? 'Gemfile'").limit(1000).map(&:store_gemfile)
+    Repo.with_trees.where("NOT data ? 'Gemfile'").limit(1000).map(&:store_gemfile)
   end
 
   def self.process_trees
@@ -31,7 +34,11 @@ class Repo < ActiveRecord::Base
 
     puts "ID: #{repo.id}"
     repo.response = data
-    repo.save!
+    begin
+      repo.save!
+    rescue
+      binding.pry
+    end
 
     return repo
   end
@@ -45,15 +52,34 @@ class Repo < ActiveRecord::Base
 
     result = api.get_request uri
 
-    Base64.decode64 result.content
+    if result.type == "file"
+      Base64.decode64 result.content
+    else
+      puts result.type
+      data["Gemfile"] = nil
+      save!
+
+      return nil
+    end
   end
 
   def fetch_gemfile
-    retries = 2
+    retries = 0
     begin
       get_repo_contents("Gemfile")
     rescue Github::Error::NotFound
+      data["Gemfile"] = nil
+      save!
+
       return nil
+    rescue Github::Error::Forbidden => e # Rate limit exceeded
+      puts e.message
+      sleep 120
+
+      retry
+    rescue Github::Error::ServiceError => e
+      print "\a"
+      binding.pry
     rescue Faraday::Error::ConnectionFailed, Github::Error::InternalServerError => e
       puts e
 
@@ -82,6 +108,8 @@ class Repo < ActiveRecord::Base
         data["Gemfile"] = nil
         save!
       end
+    else
+      puts "No tree data"
     end
   end
 
@@ -102,13 +130,34 @@ class Repo < ActiveRecord::Base
 
         self.data["tree"] = process_tree(res.tree)
         save!
-      rescue Github::Error::NotFound
+      rescue Github::Error::NotFound => e
+        puts e.message
+
         self.data["tree"] = nil
         save!
-      rescue Faraday::Error::ConnectionFailed, Github::Error::ServiceError => e
+      rescue Github::Error::Forbidden => e # Rate limit exceeded
         puts e.message
+        sleep 120
+        retry
+      rescue Github::Error::ServiceUnavailable => e
+        puts e.message
+      rescue Faraday::Error::ConnectionFailed, Github::Error::ServiceError => e
+        if e.respond_to? :http_headers
+          if e.http_headers["status"] =~ /409/
+            self.data["tree"] = nil
+            save!
+          else
+            puts e.message
+          end
+        else
+          puts e.message
+        end
       end
     end
+  end
+
+  def fetch_full_data
+    # TODO: Get full repo data
   end
 
   def process_tree(tree)
