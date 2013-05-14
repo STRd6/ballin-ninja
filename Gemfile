@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "activerecord"
 gem 'activerecord-postgres-hstore'
+gem "activesupport"
 gem "foreman"
 gem "github_api"
 gem "haml"

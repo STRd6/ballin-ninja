@@ -3,7 +3,7 @@ require "sidekiq"
 worker_processes 3
 
 before_fork do |server, worker|
-  @sidekiq_pid ||= spawn("bundle exec sidekiq -r ./main.rb")
+  @sidekiq_pid ||= spawn("bundle exec sidekiq -r ./main.rb -C config/sidekiq.yml")
 end
 
 after_fork do |server, worker|

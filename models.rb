@@ -5,7 +5,6 @@ require './parser_util'
 require "active_record"
 require "activerecord-postgres-hstore"
 require 'uri_template'
-require 'pry'
 
 class Repo < ActiveRecord::Base
   serialize :response, ActiveRecord::Coders::Hstore
@@ -37,7 +36,7 @@ class Repo < ActiveRecord::Base
     begin
       repo.save!
     rescue
-      binding.pry
+      # binding.pry
     end
 
     return repo
@@ -78,8 +77,8 @@ class Repo < ActiveRecord::Base
 
       retry
     rescue Github::Error::ServiceError => e
-      print "\a"
-      binding.pry
+      # print "\a"
+      # binding.pry
     rescue Faraday::Error::ConnectionFailed, Github::Error::InternalServerError => e
       puts e
 

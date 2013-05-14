@@ -103,6 +103,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   activerecord-postgres-hstore
+  activesupport
   foreman
   github_api
   haml

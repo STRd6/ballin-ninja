@@ -1,7 +1,16 @@
+require 'active_support/core_ext'
+
+require "./config/environments"
+require "./models"
+
 Dir[File.dirname(__FILE__) + '/app/workers/*.rb'].each do |file|
   require file
 end
 
-puts "Heeey1"
+DB.connect
 
-HardWorker.perform_async("lul", "wat")
+# Get the ball rolling
+MasterWorker.perform_async
+
+# require "pry"
+# binding.pry
