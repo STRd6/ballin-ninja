@@ -10,7 +10,7 @@ end
 DB.connect
 
 # Get the ball rolling
-MasterWorker.perform_async
+# MasterWorker.perform_async
 
 # require "pry"
 # binding.pry
