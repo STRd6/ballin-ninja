@@ -12,8 +12,8 @@ gem "rake"
 gem "ruby_parser"
 gem "sidekiq"
 gem "sinatra", :require => false
-# gem "sinatra-activerecord"
-# gem "sinatra-contrib"
+gem "sinatra-activerecord"
+gem "sinatra-contrib"
 gem "slim", "1.3.8"
 gem "unicorn"
 gem 'uri_template'

@@ -1,5 +1,6 @@
 require "active_record"
 require "activerecord-postgres-hstore"
+require "uri"
 
 module DB
   def self.connect
