@@ -6,6 +6,7 @@ gem "activesupport"
 gem "foreman"
 gem "github_api"
 gem "haml"
+gem 'newrelic_rpm'
 gem "pg"
 gem "pry"
 gem "rake"
