@@ -2,7 +2,9 @@ class TreeWorker
   include Sidekiq::Worker
 
   def perform
-    Repo.process_trees
+    ActiveRecord::Base.uncached do
+      Repo.process_trees
+    end
 
     sleep 60
 

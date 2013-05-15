@@ -10,8 +10,8 @@ class Repo < ActiveRecord::Base
   serialize :response, ActiveRecord::Coders::Hstore
   serialize :data, ActiveRecord::Coders::Hstore
 
-  scope :with_gemfiles, where("(data->'Gemfile') IS NOT NULL")
-  scope :with_trees, where("(data->'tree') IS NOT NULL")
+  scope :with_gemfiles, where("data ? 'Gemfile'").where("(data->'Gemfile') IS NOT NULL")
+  scope :with_trees, where("data ? 'tree'").where("(data->'tree') IS NOT NULL")
 
   def self.process_gemfiles
     # This finds repos that have data (data IS NOT NULL)

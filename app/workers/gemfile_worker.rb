@@ -2,7 +2,9 @@ class GemfileWorker
   include Sidekiq::Worker
 
   def perform
-    Repo.process_gemfiles
+    ActiveRecord::Base.uncached do
+      Repo.process_gemfiles
+    end
 
     sleep 30
 
