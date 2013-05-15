@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require "newrelic_rpm"
 require "sinatra"
 
 Dir[File.dirname(__FILE__) + '/app/workers/*.rb'].each do |file|
