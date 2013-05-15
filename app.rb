@@ -1,34 +1,15 @@
 #!/usr/bin/env ruby
 
-require "haml"
 require "sinatra"
-require 'sinatra/activerecord'
-require "sinatra/json"
-require './config/environments'
-require "./models"
+
+Dir[File.dirname(__FILE__) + '/app/workers/*.rb'].each do |file|
+  require file
+end
 
 set :haml, :format => :html5
 
-get "/repos" do
-  @repos = Repo.all
+set :protection, :except => [:http_origin]
 
-  haml :repos
-end
-
-get "/repos/:id" do |id|
-  @repo = Repo.includes(:ruby_gems).find(id)
-
-  haml :repo
-end
-
-get "/gems" do
-  @gems = RubyGem.all
-
-  haml :gems
-end
-
-get "/gems/:id" do |id|
-  @gem = RubyGem.includes(:repos).find(id)
-
-  haml :gem
+post "/jobs/:name" do |name|
+  "#{name}Worker".constantize.perform_async
 end

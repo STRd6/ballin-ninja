@@ -16,11 +16,11 @@ class Repo < ActiveRecord::Base
   def self.process_gemfiles
     # This finds repos that have data (data IS NOT NULL)
     # but don't have a Gemfile key in that data
-    Repo.with_trees.where("NOT data ? 'Gemfile'").limit(1000).map(&:store_gemfile)
+    Repo.with_trees.where("NOT data ? 'Gemfile'").limit(100).map(&:store_gemfile)
   end
 
   def self.process_trees
-    Repo.where("data IS NULL").limit(1000).map(&:refresh_tree)
+    Repo.where("data IS NULL").limit(100).map(&:refresh_tree)
   end
 
   def self.create_or_update_from_github(data)
