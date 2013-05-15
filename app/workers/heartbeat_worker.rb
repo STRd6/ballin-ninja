@@ -5,9 +5,11 @@ class HeartbeatWorker
 
   def perform
     # Clear out arrythmia
-    Sidekiq::Queue.new("default").each do |job|
-      if job.klass == self.class.name
-        job.delete
+    Sidekiq.redis do |redis|
+      jobs = redis.zrange "schedule", 0, 1
+      # TODO: Heartbeat may not be the only scheduled job in the future
+      jobs.each do |job|
+        redis.zrem "schedule", job
       end
     end
 
