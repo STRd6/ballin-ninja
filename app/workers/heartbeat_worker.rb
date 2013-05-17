@@ -1,21 +1,16 @@
 require 'net/http'
+require_relative "base_worker"
 
-class HeartbeatWorker
-  include Sidekiq::Worker
+class HeartbeatWorker < BaseWorker
+  def delay
+    2.minutes
+  end
 
   def perform
-    # Clear out arrythmia
-    Sidekiq.redis do |redis|
-      jobs = redis.zrange "schedule", 0, 1
-      # TODO: Heartbeat may not be the only scheduled job in the future
-      jobs.each do |job|
-        redis.zrem "schedule", job
-      end
+    highlander do
+      Net::HTTP.get("pure-scrubland-1990.herokuapp.com", "/workers")
+
+      # TODO: Consider resussitating busted processes
     end
-
-    # Set the next heartbeat
-    HeartbeatWorker.perform_in 2.minutes
-
-    Net::HTTP.get("pure-scrubland-1990.herokuapp.com", "/workers")
   end
 end

@@ -1,14 +1,10 @@
 require_relative "base_worker"
 
-class TreeWorker < BaseWorker
-  def delay
-    2.minutes
-  end
-
+class UpdateWorker < BaseWorker
   def perform
     highlander do
       ActiveRecord::Base.uncached do
-        Repo.process_trees
+        puts "lulwat"
       end
     end
   end

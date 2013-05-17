@@ -13,6 +13,6 @@ DB.connect
 
 # Get the ball rolling
 HeartbeatWorker.perform_async
-
-# require "pry"
-# binding.pry
+GemfileWorker.perform_async
+TreeWorker.perform_async
+UpdateWorker.perform_async
