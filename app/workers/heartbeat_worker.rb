@@ -1,4 +1,5 @@
 require 'net/http'
+require_relative "base_worker"
 
 class HeartbeatWorker < BaseWorker
   def delay

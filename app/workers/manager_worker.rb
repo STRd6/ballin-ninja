@@ -1,3 +1,5 @@
+require_relative "base_worker"
+
 class ManagerWorker < BaseWorker
   def stats
     Sidekiq::Stats.new
