@@ -13,6 +13,4 @@ DB.connect
 
 # Get the ball rolling
 HeartbeatWorker.perform_async
-GemfileWorker.perform_async
-TreeWorker.perform_async
-UpdateWorker.perform_async
+ManagerWorker.perform_async

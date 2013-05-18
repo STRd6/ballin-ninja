@@ -64,8 +64,6 @@ class Repo < ActiveRecord::Base
   def get_full_data
     uri = response["url"]
 
-    retries = 1
-
     begin
       result = api.get_request(uri)
       handle_full_data(result.to_hash)
@@ -80,15 +78,6 @@ class Repo < ActiveRecord::Base
       puts e
     rescue Faraday::Error::ConnectionFailed, Github::Error::InternalServerError => e
       puts e
-
-      retries -= 1
-
-      if retries >= 0
-        puts "Sleeping for 1 second then retrying #{retries} more times"
-        sleep 1
-
-        retry
-      end
     end
   end
 
