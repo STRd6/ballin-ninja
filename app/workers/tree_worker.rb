@@ -2,7 +2,7 @@ require_relative "base_worker"
 
 class TreeWorker < BaseWorker
   def delay
-    2.minutes
+    1.minutes
   end
 
   def perform

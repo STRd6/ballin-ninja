@@ -9,4 +9,4 @@ ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 DB.connect
 
-binding.pry
+pry

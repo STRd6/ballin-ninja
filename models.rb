@@ -9,6 +9,7 @@ require 'uri_template'
 class Repo < ActiveRecord::Base
   serialize :response, ActiveRecord::Coders::Hstore
   serialize :data, ActiveRecord::Coders::Hstore
+  serialize :full_data, ActiveRecord::Coders::Hstore
 
   scope :with_gemfiles, where("data ? 'Gemfile'").where("(data->'Gemfile') IS NOT NULL")
   scope :with_trees, where("data ? 'tree'").where("(data->'tree') IS NOT NULL")
@@ -21,6 +22,10 @@ class Repo < ActiveRecord::Base
 
   def self.process_trees
     Repo.where("data IS NULL").limit(100).map(&:refresh_tree)
+  end
+
+  def self.process_updates
+    Repo.where(:master_branch => nil).limit(100).map(&:ensure_master_branch)
   end
 
   def self.create_or_update_from_github(data)
@@ -44,6 +49,65 @@ class Repo < ActiveRecord::Base
 
   def api
     GitInfo.instance
+  end
+
+  def ensure_master_branch
+    logger.info "Fecting full data for #{id}"
+    if full_data.empty?
+      get_full_data
+    else
+      # Probably sholdn't be here
+      logger.warn "Have full data, but haven't set master branch"
+    end
+  end
+
+  def get_full_data
+    uri = response["url"]
+
+    retries = 1
+
+    begin
+      result = api.get_request(uri)
+      handle_full_data(result.to_hash)
+    rescue Github::Error::NotFound => e
+      puts e
+    rescue Github::Error::Forbidden => e # Rate limit exceeded
+      puts e.message
+      sleep 120
+
+      retry
+    rescue Github::Error::ServiceError => e
+      puts e
+    rescue Faraday::Error::ConnectionFailed, Github::Error::InternalServerError => e
+      puts e
+
+      retries -= 1
+
+      if retries >= 0
+        puts "Sleeping for 1 second then retrying #{retries} more times"
+        sleep 1
+
+        retry
+      end
+    end
+  end
+
+  def handle_full_data(result)
+    self.master_branch = result["default_branch"] || result["master_branch"]
+
+    result.delete "owner"
+
+    if source = result.delete("source")
+      self.source_id = source["id"]
+    end
+
+    if parent = result.delete("parent")
+      self.parent_id = parent["id"]
+    end
+
+    self.full_data = result
+
+    self.save!
   end
 
   def get_repo_contents(path)
