@@ -52,12 +52,12 @@ class Repo < ActiveRecord::Base
   end
 
   def ensure_master_branch
-    logger.info "Fecting full data for #{id}"
+    puts "Fecting full data for #{id}"
     if full_data.empty?
       get_full_data
     else
       # Probably sholdn't be here
-      logger.warn "Have full data, but haven't set master branch"
+      puts "Have full data, but haven't set master branch"
     end
   end
 
