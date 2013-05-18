@@ -71,6 +71,11 @@ class Repo < ActiveRecord::Base
       puts e
     rescue Github::Error::Forbidden => e # Rate limit exceeded
       puts e.message
+
+      if e.message =~ /Repository access blocked/
+        return # Not rate limit, some other permission error
+      end
+
       sleep 120
 
       retry
