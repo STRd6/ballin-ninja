@@ -2,6 +2,7 @@
 
 require "./config/environments"
 require "./models"
+require "./app/models/api_token"
 require "logger"
 require "pry"
 
