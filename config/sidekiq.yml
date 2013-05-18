@@ -3,4 +3,4 @@
 #   sidekiq -C config/sidekiq.yml
 
 ---
-:concurrency:  5
+:concurrency:  2
