@@ -14,3 +14,16 @@ end
 task :dump_db do
   sh "pg_dump -Fc --no-acl --no-owner -h localhost git_info > mydb.dump"
 end
+
+task :default => :deploy
+
+desc "Ship it!"
+task :deploy do
+  sh "bundle exec foreman start -f ./deploy.Procfile"
+end
+
+namespace :heroku do
+  task :migrate do
+    sh "heroku run rake db:migrate --app pure-scrubland-1990"
+  end
+end
