@@ -3,7 +3,7 @@ class ApiToken < ActiveRecord::Base
 
   def self.random
     uncached do
-      if record = order("RANDOM()").first()
+      if record = where(:active => true).order("RANDOM()").first()
         record.token
       else
         ENV["TOKEN"]

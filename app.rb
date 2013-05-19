@@ -20,6 +20,20 @@ post "/jobs/:name" do |name|
   "#{name}Worker".constantize.perform_async
 end
 
+get "/tokens/deactivate" do
+  haml :deactivate
+end
+
+post "/tokens/deactivate" do
+  if record = ApiToken.find_by_token(params[:token])
+    record.update_attributes(:active => false)
+    "OK!"
+  else
+    status 406
+    "NOT OK!"
+  end
+end
+
 get "/tokens" do
   haml :tokens
 end
@@ -45,4 +59,8 @@ __END__
 
 @@ tokens
 %form(action='/tokens' method='post')
+  %input(name='token')
+
+@@ deactivate
+%form(action='/tokens/deactivate' method='post')
   %input(name='token')

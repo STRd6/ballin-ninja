@@ -7,6 +7,7 @@ namespace :db do
     DB.connect
   end
 
+  task :rollback => :connect
   task :migrate => :connect
 end
 
