@@ -76,7 +76,7 @@ class Repo < ActiveRecord::Base
         return # Not rate limit, some other permission error
       end
 
-      sleep 120
+      sleep 10
 
       retry
     rescue Github::Error::ServiceError => e
