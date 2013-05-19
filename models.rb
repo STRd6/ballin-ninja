@@ -65,7 +65,7 @@ class Repo < ActiveRecord::Base
     uri = response["url"]
 
     begin
-      result = api.get_request(uri)
+      result = api.get_request(uri, access_token: ApiToken.random)
       handle_full_data(result.to_hash)
     rescue Github::Error::NotFound => e
       puts e

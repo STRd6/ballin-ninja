@@ -10,10 +10,6 @@ class GitInfo
 
   def self.instance
     @instance ||= Github.new(oauth_token: ENV["TOKEN"])
-
-    @instance.oauth_token = ApiToken.random
-
-    return @instance
   end
 
   def initialize
