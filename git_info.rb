@@ -3,12 +3,17 @@
 require "github_api"
 require "./config/environments"
 require "./models"
+require "./app/models/api_token"
 
 class GitInfo
   attr_reader :github
 
   def self.instance
     @instance ||= Github.new(oauth_token: ENV["TOKEN"])
+
+    @instance.oauth_token = ApiToken.random
+
+    return @instance
   end
 
   def initialize
