@@ -24,10 +24,6 @@ class Repo < ActiveRecord::Base
     Repo.where("data IS NULL").limit(100).map(&:refresh_tree)
   end
 
-  def self.process_updates
-    Repo.where(:master_branch => nil).limit(100).map(&:ensure_master_branch)
-  end
-
   def self.create_or_update_from_github(data)
     repo = find_or_initialize_by_id(data.id)
 
@@ -68,11 +64,18 @@ class Repo < ActiveRecord::Base
       result = api.get_request(uri, access_token: ApiToken.random)
       handle_full_data(result.to_hash)
     rescue Github::Error::NotFound => e
+      # Repository ma no longer be public?
+      self.error = e.message
+      save
+
       puts e
     rescue Github::Error::Forbidden => e # Rate limit exceeded
       puts e.message
 
       if e.message =~ /Repository access blocked/
+        self.error = e.message
+        save
+
         return # Not rate limit, some other permission error
       end
 
