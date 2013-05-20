@@ -23,6 +23,11 @@ task :deploy do
 end
 
 namespace :heroku do
+  task :restart do
+    sh "heroku restart --app pure-scrubland-1990"
+    sh "heroku restart --app polar-mountain-9297"
+  end
+
   task :migrate do
     sh "heroku run rake db:migrate --app pure-scrubland-1990"
   end
