@@ -174,10 +174,10 @@ class Repo < ActiveRecord::Base
   end
 
   def default_tree_url
-    default_branch = "master"
+    default_branch = master_branch || "master"
 
     URITemplate.new(response["trees_url"]).expand(
-      :sha => default_branch
+      :sha => master_branch
     )
   end
 
