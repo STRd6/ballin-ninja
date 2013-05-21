@@ -1,4 +1,5 @@
 require "active_record"
+require "activerecord-postgres-array"
 require "activerecord-postgres-hstore"
 require "uri"
 

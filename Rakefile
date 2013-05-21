@@ -33,6 +33,11 @@ namespace :heroku do
     sh "heroku restart --app polar-mountain-9297"
   end
 
+  task :stop do
+    sh "heroku ps:stop web --app pure-scrubland-1990"
+    sh "heroku ps:stop worker --app polar-mountain-9297"
+  end
+
   task :migrate do
     sh "heroku run rake db:migrate --app pure-scrubland-1990"
   end

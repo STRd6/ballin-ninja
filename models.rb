@@ -47,6 +47,32 @@ class Repo < ActiveRecord::Base
     GitInfo.instance
   end
 
+  def gemfile
+    data["Gemfile"]
+  end
+
+  def update_state
+    if master_branch
+      self.state = "master_branch"
+    elsif error
+      self.state = "error"
+    elsif gemfile
+      self.state = "gemfile"
+    elsif data["tree"]
+      self.tree = data["tree"]
+
+      if tree.empty?
+        self.state = "no_tree"
+      else
+        self.state = "tree"
+      end
+    else
+      self.state = "needs_master"
+    end
+
+    save
+  end
+
   def ensure_master_branch
     puts "Fecting full data for #{id}"
     if full_data.empty?

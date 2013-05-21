@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "activerecord"
+gem 'activerecord-postgres-array'
 gem 'activerecord-postgres-hstore'
 gem "activesupport"
 gem "foreman"
