@@ -22,6 +22,11 @@ task :deploy do
   sh "bundle exec foreman start -f ./deploy.Procfile"
 end
 
+desc "Log it!"
+task :logs do
+  sh "foreman start -f ./logs.Procfile"
+end
+
 namespace :heroku do
   task :restart do
     sh "heroku restart --app pure-scrubland-1990"
