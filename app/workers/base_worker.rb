@@ -2,7 +2,7 @@ class BaseWorker
   include Sidekiq::Worker
 
   def delay
-    15
+    1
   end
 
   def queue
