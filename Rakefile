@@ -39,6 +39,7 @@ namespace :heroku do
   end
 
   task :migrate do
-    sh "heroku run rake db:migrate --app pure-scrubland-1990"
+    sh "heroku ps:scale migrant=1 --app intense-meadow-1469"
+    # sh "heroku run rake db:migrate --app pure-scrubland-1990"
   end
 end
